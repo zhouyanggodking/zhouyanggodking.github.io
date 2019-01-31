@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Environment Setup</title>
+  <link rel="stylesheet" href="../css/common.css">
+</head>
+<body>
+  <canvas id="renderCanvas"></canvas>
+  <!-- touch-action="none" for best results from PEP -->
+  <!-- Link to the last version of BabylonJS -->
+  <script src="https://preview.babylonjs.com/babylon.js"></script>
+  <!-- Link to the last version of BabylonJS loaders to enable loading filetypes such as .gltf -->
+  <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+  <!-- Link to pep.js to ensure pointer events work consistently in all browsers -->
+  <script src="https://code.jquery.com/pep/0.4.1/pep.js"></script>
+  <script>
+    const canvas = document.getElementById('renderCanvas');
+    const engine = new BABYLON.Engine(canvas, true); // true for antialias
+
+    const createScene = (canvas, engine) => {
+      // create scene
+      const scene = new BABYLON.Scene(engine);
+      // add camera
+      const camera = new BABYLON.ArcRotateCamera('camera', Math.PI / 2, Math.PI / 2, 8, BABYLON.Vector3.Zero(), scene);
+      camera.attachControl(canvas, true);
+      // add light
+      const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(1, 1, 0), scene);
+      light.diffuse = new BABYLON.Color3(1, 1, 0);
+
+      // add shapes
+      const sphere = BABYLON.MeshBuilder.CreateSphere('sphere', {
+        diameter: 2
+      }, scene);
+      return scene;
+    };
+
+    const scene = createScene(canvas, engine);
+
+    engine.runRenderLoop(() => {
+      scene.render();
+    });
+
+    window.addEventListener('resize', () => {
+      engine.resize();
+    });
+  </script>
+</body>
+</html>
