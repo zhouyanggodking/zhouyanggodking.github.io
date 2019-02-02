@@ -24,8 +24,7 @@
       // create scene
       const scene = new BABYLON.Scene(engine);
       // add a univeral camera
-      const camera = new BABYLON.UniversalCamera('uni-cam', new BABYLON.Vector3(-30, 0, -30), scene);
-      camera.setTarget(BABYLON.Vector3.Zero());
+      const camera = new BABYLON.ArcRotateCamera('camera', -Math.PI / 2, Math.PI / 4, 50, BABYLON.Vector3.Zero(), scene);
       camera.attachControl(canvas, true);
       // add a point light at the position of sun (zeros)
       // const sunLight = new BABYLON.PointLight('sun-light', BABYLON.Vector3.Zero(), scene);
@@ -40,7 +39,7 @@
 
       // add sun
       const sun = BABYLON.MeshBuilder.CreateSphere('sun', {
-        diameter: 4
+        diameter: 6
       }, scene); 
       sun.position.x = 12;
       sun.material = sunMat;
@@ -55,9 +54,9 @@
       });
 
       // animation target properties like position.x, scaling.x, rotation.x
-      const sunSelfSpinAnimation = new BABYLON.Animation('self-spin', 'rotation.y', 2, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
-      sunSelfSpinAnimation.setKeys(aniKeys);
-      sun.animations.push(sunSelfSpinAnimation);
+      const selfSpinAnimation = new BABYLON.Animation('self-spin', 'rotation.y', 8, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+      selfSpinAnimation.setKeys(aniKeys);
+      sun.animations.push(selfSpinAnimation);
       scene.beginAnimation(sun, 0, 100, true);
 
       // construction earch orbit
@@ -67,12 +66,28 @@
       
 
       const orbitPoints = [];
-      for (let phi = 0; phi < pointLength; ++phi) {
+      for (let phi = 0; phi <= pointLength; ++phi) {
         const theta = 2 * Math.PI * phi / pointLength;
         const orbit_x = a * Math.cos(theta);
         const orbit_z = b * Math.sin(theta);
         orbitPoints.push(new BABYLON.Vector3(orbit_x, 0, orbit_z));
       }
+
+      const orbit = BABYLON.MeshBuilder.CreateLines('orbit', {
+        points: orbitPoints
+      }, scene);
+
+      // add earth
+      const earthMat = new BABYLON.StandardMaterial('earth-mat', scene);
+      earthMat.emissiveTexture = new BABYLON.Texture('../img/texture_earth_clouds.jpg', scene);
+      const earth = BABYLON.MeshBuilder.CreateSphere('earth', {
+        diameter: 3
+      }, scene); 
+      earth.position.x = -20;
+      earth.material = earthMat;
+
+      earth.animations.push(selfSpinAnimation);
+      scene.beginAnimation(earth, 0, 100, true);
 
       return scene;
     };
