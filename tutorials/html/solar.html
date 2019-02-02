@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Solar System</title>
+  <link rel="stylesheet" href="../css/common.css">
+</head>
+<body>
+  <canvas id="renderCanvas"></canvas>
+  <!-- touch-action="none" for best results from PEP -->
+  <!-- Link to the last version of BabylonJS -->
+  <script src="https://preview.babylonjs.com/babylon.js"></script>
+  <!-- Link to the last version of BabylonJS loaders to enable loading filetypes such as .gltf -->
+  <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+  <!-- Link to pep.js to ensure pointer events work consistently in all browsers -->
+  <script src="https://code.jquery.com/pep/0.4.1/pep.js"></script>
+  <script>
+    const canvas = document.getElementById('renderCanvas');
+    const engine = new BABYLON.Engine(canvas, true); // true for antialias
+
+    const createScene = (canvas, engine) => {
+      // create scene
+      const scene = new BABYLON.Scene(engine);
+      // add a univeral camera
+      const camera = new BABYLON.UniversalCamera('uni-cam', new BABYLON.Vector3(-30, 0, -30), scene);
+      camera.setTarget(BABYLON.Vector3.Zero());
+      camera.attachControl(canvas, true);
+      // add a point light at the position of sun (zeros)
+      // const sunLight = new BABYLON.PointLight('sun-light', BABYLON.Vector3.Zero(), scene);
+      // sunLight.diffuse = new BABYLON.Color3(1, 1, 1);
+      // sunLight.specular = new BABYLON.Color3(1, 1, 1);
+
+      // material
+      const sunMat = new BABYLON.StandardMaterial('sun-mat', scene);
+      // material.ambientColor = new BABYLON.Color3(1, 0, 0); // need to set the ambient color of scene to take effect
+      // sunMat.emissiveColor= new BABYLON.Color3(1, 1, 1);
+      sunMat.emissiveTexture = new BABYLON.Texture('../img/texture_sun.jpg', scene);
+
+      // add sun
+      const sun = BABYLON.MeshBuilder.CreateSphere('sun', {
+        diameter: 4
+      }, scene); 
+      sun.position.x = 12;
+      sun.material = sunMat;
+
+      // add animation  -- spinning box
+      const frameLength = 100;
+      const aniKeys = new Array(frameLength).fill({}).map((item, index) => {
+        return {
+          frame: index,
+          value: -2 * Math.PI * index / frameLength
+        }
+      });
+
+      // animation target properties like position.x, scaling.x, rotation.x
+      const sunSelfSpinAnimation = new BABYLON.Animation('self-spin', 'rotation.y', 2, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+      sunSelfSpinAnimation.setKeys(aniKeys);
+      sun.animations.push(sunSelfSpinAnimation);
+      scene.beginAnimation(sun, 0, 100, true);
+
+      // construction earch orbit
+      const pointLength = 100;
+      const a = 20;
+      const b = 16;
+      
+
+      const orbitPoints = [];
+      for (let phi = 0; phi < pointLength; ++phi) {
+        const theta = 2 * Math.PI * phi / pointLength;
+        const orbit_x = a * Math.cos(theta);
+        const orbit_z = b * Math.sin(theta);
+        orbitPoints.push(new BABYLON.Vector3(x, 0, z));
+      }
+
+      return scene;
+    };
+
+    const scene = createScene(canvas, engine);
+
+    engine.runRenderLoop(() => {
+      scene.render();
+    });
+
+    window.addEventListener('resize', () => {
+      engine.resize();
+    });
+  </script>
+</body>
+</html>
