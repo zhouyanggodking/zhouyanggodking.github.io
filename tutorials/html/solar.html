@@ -71,7 +71,7 @@
         const theta = 2 * Math.PI * phi / pointLength;
         const orbit_x = a * Math.cos(theta);
         const orbit_z = b * Math.sin(theta);
-        orbitPoints.push(new BABYLON.Vector3(x, 0, z));
+        orbitPoints.push(new BABYLON.Vector3(orbit_x, 0, orbit_z));
       }
 
       return scene;
