@@ -56,7 +56,7 @@
 
       // add moon
       const moonMat = new BABYLON.StandardMaterial('moon-mat', scene);
-      const moonPos = new BABYLON.Vector3(-25, 0, 0);
+      const moonPos = new BABYLON.Vector3(-3, 0, 0);
       moonMat.emissiveTexture = new BABYLON.Texture('../img/texture_moon.jpg', scene);
       const moon = BABYLON.MeshBuilder.CreateSphere('moon', {
         diameter: 2
@@ -64,7 +64,7 @@
       moon.position = moonPos;
       moon.material = moonMat;
 
-      // moon.parent = earth;
+      moon.parent = earth;
 
       const moonTranslation = moonPos.subtract(earthPos);
       moon.setPivotMatrix(BABYLON.Matrix.Translation(moonTranslation.x, moonTranslation.y, moonTranslation.z));
@@ -90,11 +90,14 @@
       const sunAngleSpeed = 0.01;
       const sunRotationAxis = new BABYLON.Vector3(0, 1, 0);
       const earthAngleSpeed = 0.02;
-      const earthRotationAxis = new BABYLON.Vector3(0.2, 1, 0);
+      const earthRotationAxis = new BABYLON.Vector3(0, 1, 0);
+      let orbitPointIndex = 0;
       scene.registerAfterRender(() => {
+        earth.position = orbitPoints[orbitPointIndex];
         sun.rotate(sunRotationAxis, sunAngleSpeed, BABYLON.Space.WORLD);
         earth.rotate(earthRotationAxis, earthAngleSpeed, BABYLON.Space.WORLD);
-        moon.rotate(sunRotationAxis, 0.01, BABYLON.Space.WORLD);
+        // moon.rotate(sunRotationAxis, 0.01, BABYLON.Space.WORLD);
+        orbitPointIndex = (orbitPointIndex + 1) % (pointLength - 1);
       });
 
       return scene;
