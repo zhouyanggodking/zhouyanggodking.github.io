@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>OCR demo</title>
+  <style>
+    .container {
+      display: flex;
+    }
+  </style>
+</head>
+<body>
+  <input id="imageInput" accept=".png, .jpg" type="file" name="image" />
+  <div class="container">
+    <img id="image" alt="No image chosen"/>
+    <div class="ocr-result"></div>
+  </div>
+  <!-- include Tesseract.jsm, see https://github.com/naptha/tesseract.js -->
+  <script src='https://cdn.jsdelivr.net/gh/naptha/tesseract.js@v1.0.14/dist/tesseract.min.js'></script>
+  <script>
+    const imgInput = document.querySelector('#imageInput');
+    const img = document.querySelector('#image');
+    imgInput.addEventListener('change', (evt) => {
+      const file = evt.srcElement.files[0];
+      const fileUrl = URL.createObjectURL(file);
+      img.src = fileUrl;
+    });
+    img.addEventListener('load', async () => {
+      console.log('image loaded');
+
+      const result = await Tesseract.recognize(img, {
+        lang: 'chi_sim'
+      });
+      console.log(result.text);
+
+      //const lang = await Tesseract.detect(img);
+      //console.log(lang);
+    });
+  </script>
+</body>
+</html>
