@@ -10,7 +10,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="css">
 html, body{
   margin: 0;
   padding: 0;
@@ -23,6 +23,10 @@ html, body{
 
 *{
   box-sizing: border-box;
+}
+
+.row {
+  display: flex;
 }
 
 </style>
